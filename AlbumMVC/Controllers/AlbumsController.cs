@@ -20,11 +20,17 @@ namespace AlbumMVC.Controllers
         }
 
         // GET: Albums
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-              return _context.Album != null ? 
-                          View(await _context.Album.ToListAsync()) :
-                          Problem("Entity set 'AlbumMVCContext.Album'  is null.");
+              var albums = from a in _context.Album
+                           select a;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                albums = albums.Where(s => s.Title.Contains(searchString));
+            }
+
+            return View( await albums.ToListAsync());
         }
 
         // GET: Albums/Details/5
